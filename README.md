@@ -36,5 +36,6 @@ En esta actividad, se busca encontrar el camino óptimo desde un **punto de inic
 
 ### Recursos Adicionales
 
+
 - ![Gráfico de la Actividad](Actividad_Grafos.jpg)
 - [Ver el PDF de la Actividad](Actividad_Grafos.pdf)    
