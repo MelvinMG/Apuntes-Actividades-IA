@@ -1,0 +1,7 @@
+opencv-python
+scikit-learn 
+numpy   
+pandas 
+tensorflow
+pygame
+   
