@@ -1,3 +1,4 @@
+import os
 import joblib
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
@@ -30,7 +31,12 @@ y_pred = mlp.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 print(f'\nPrecisión en test: {accuracy:.4f}')
 
+
+# Definir la ruta donde quieres guardar los archivos
+directorio = "Ejemplos/Ejemplo_Feedforward"
+# Crear el directorio si no existe
+os.makedirs(directorio, exist_ok=True)
 # Guardar el modelo y el scaler para su uso posterior
-joblib.dump(mlp, 'mlp_model.pkl')
-joblib.dump(scaler, 'scaler.pkl')
+joblib.dump(mlp, os.path.join(directorio, 'mlp_model.pkl'))
+joblib.dump(scaler, os.path.join(directorio, 'scaler.pkl'))
 print("\nModelo y scaler guardados correctamente.")
