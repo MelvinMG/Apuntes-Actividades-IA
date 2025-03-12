@@ -4,4 +4,4 @@ numpy
 pandas 
 tensorflow
 pygame
-   
+opencv-contrib-python
