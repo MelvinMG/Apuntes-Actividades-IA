@@ -15,9 +15,9 @@ while True:
         cv.imshow('Video',img)
         #cv.imshow('Video_gray',gray)
 
-    k=cv.waitKey(1) & 0xFF # se tiene que apretar la tecla esc para que se cierre la ventana
-    if k==27:
-        break
+        k=cv.waitKey(1) & 0xFF # se tiene que apretar la tecla esc para que se cierre la ventana
+        if k==27:
+            break
     else:
         break
 
