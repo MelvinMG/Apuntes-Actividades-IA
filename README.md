@@ -5,4 +5,4 @@ Repositorio de apuntes, actividades y proyectos de la materia de IA, de Melvin M
 
 # Proyectos
 ## 1.- Proyecto A* 
-[📂 Ver carpeta del proyecto](./Proyectos/Asterisco/)
+[📂 Ver carpeta del proyecto](./Proyectos/asterisco/)
