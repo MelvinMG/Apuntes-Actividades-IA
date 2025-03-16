@@ -51,6 +51,6 @@ En esta función se exploran todos los nodos o vecinos existentes en la cuadríc
 
 ## Ejemplo de Resultado
 
-![Avance 1](images/Avance_1.png)
+![Avance 1](/Proyectos/Asterisco/Images/Avance_1.png)
 
 En la captura se observa cómo los nodos transitables (excluyendo las paredes, el nodo de inicio y el nodo final) aparecen en **verde** y muestran sus costos actualizados. Además, en la consola se reporta cada nodo visitado junto con los valores de `g`, `h` y `f`.
