@@ -1,6 +1,7 @@
 import pygame
 
 # Configuraciones iniciales
+pygame.init()  # Asegúrate de inicializar Pygame (para poder usar fuentes)
 ANCHO_VENTANA = 800
 VENTANA = pygame.display.set_mode((ANCHO_VENTANA, ANCHO_VENTANA))
 pygame.display.set_caption("Visualización de Nodos")
@@ -14,6 +15,12 @@ ROJO = (255, 0, 0)
 NARANJA = (255, 165, 0)
 PURPURA = (128, 0, 128)
 
+def escribir_texto(ventana, texto, x, y, color=(0,0,0), tam=18):
+    """Dibuja el texto en la ventana, en la posición (x, y)."""
+    fuente = pygame.font.SysFont(None, tam)
+    superficie_texto = fuente.render(texto, True, color)
+    ventana.blit(superficie_texto, (x, y))
+
 class Nodo:
     def __init__(self, fila, col, ancho, total_filas):
         self.fila = fila
@@ -23,7 +30,6 @@ class Nodo:
         self.color = BLANCO
         self.ancho = ancho
         self.total_filas = total_filas
-        self.visitado = False  # Indica si el nodo ha sido visitado
         
         # Costos para el algoritmo A*
         self.g = float("inf")  # Costo acumulado (inicialmente infinito)
@@ -44,7 +50,6 @@ class Nodo:
 
     def restablecer(self):
         self.color = BLANCO
-        self.visitado = False
         self.g = float("inf")
         self.h = 0
         self.f = float("inf")
@@ -58,15 +63,27 @@ class Nodo:
     def hacer_fin(self):
         self.color = PURPURA
 
-    def marcar_visitado(self):
-        self.visitado = True
-
     def dibujar(self, ventana):
-        # Si ya fue visitado, se pinta de verde, salvo que sea inicio o fin.
-        if self.visitado and not (self.es_inicio() or self.es_fin()):
-            pygame.draw.rect(ventana, VERDE, (self.x, self.y, self.ancho, self.ancho))
+        """
+        Pinta el nodo según su estado:
+         - Naranja si es el inicio
+         - Púrpura si es el fin
+         - Negro si es pared
+         - Verde si tiene g < inf (ha sido visitado o actualizado)
+         - Blanco si no se ha actualizado
+        """
+        if self.es_inicio():
+            color = NARANJA
+        elif self.es_fin():
+            color = PURPURA
+        elif self.es_pared():
+            color = NEGRO
+        elif self.g < float("inf"):
+            color = VERDE
         else:
-            pygame.draw.rect(ventana, self.color, (self.x, self.y, self.ancho, self.ancho))
+            color = BLANCO
+        
+        pygame.draw.rect(ventana, color, (self.x, self.y, self.ancho, self.ancho))
 
 def obtener_vecinos(grid, nodo):
     vecinos = []
@@ -98,14 +115,14 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
         # Ordena la lista abierta por el valor de f (menor costo total estimado)
         lista_abierta.sort(key=lambda nodo: nodo.f)
         nodo_actual = lista_abierta.pop(0)
-        nodo_actual.marcar_visitado()
-        print(f"Visitado: {nodo_actual.get_pos()} :: Calculos(G={nodo_actual.g}, H={nodo_actual.h}, F={nodo_actual.f})")
         lista_cerrada.append(nodo_actual)
 
-        # Aquí se comenta/elimina la interrupción para seguir explorando
-        # if nodo_actual == nodo_fin:
-        #     print("¡Objetivo alcanzado!")
-        #     break
+        print(f"Visitado: {nodo_actual.get_pos()} :: Calculos(G={nodo_actual.g}, H={nodo_actual.h}, F={nodo_actual.f})")
+
+        # Si hemos alcanzado el nodo final, detenemos la exploración
+        if nodo_actual == nodo_fin:
+            print("¡Objetivo alcanzado!")
+            break
 
         # Obtenemos los vecinos del nodo actual
         vecinos = obtener_vecinos(grid, nodo_actual)
@@ -126,7 +143,7 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
                     vecino.f = vecino.g + vecino.h
                     if vecino not in lista_abierta:
                         lista_abierta.append(vecino)
-    print("Búsqueda completada: se exploraron todos los vecinos posibles.")
+
     return lista_cerrada
 
 def crear_grid(filas, ancho):
@@ -151,6 +168,14 @@ def dibujar(ventana, grid, filas, ancho):
     for fila in grid:
         for nodo in fila:
             nodo.dibujar(ventana)
+            # --- DIBUJAR VALORES G, H, F DENTRO DE LA CELDA ---
+            if nodo.g < float("inf"):
+                offset_x = nodo.x + 2
+                offset_y = nodo.y + 2
+                escribir_texto(ventana, f"G:{nodo.g}", offset_x, offset_y, color=NEGRO, tam=15)
+                escribir_texto(ventana, f"H:{nodo.h}", offset_x, offset_y+16, color=NEGRO, tam=15)
+                escribir_texto(ventana, f"F:{nodo.f}", offset_x, offset_y+32, color=NEGRO, tam=15)
+
     dibujar_grid(ventana, filas, ancho)
     pygame.display.update()
 
@@ -208,4 +233,5 @@ def main(ventana, ancho):
         # Fin del bucle de eventos
     pygame.quit()
 
-main(VENTANA, ANCHO_VENTANA)
+if __name__ == "__main__":
+    main(VENTANA, ANCHO_VENTANA)
