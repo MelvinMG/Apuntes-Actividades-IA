@@ -50,10 +50,10 @@ En esta función se exploran todos los nodos o vecinos existentes en la cuadríc
 La heurística `h` se calcula usando la **distancia Manhattan** multiplicada por 10 unidades:
 La distancia Manhattan se obtiene sumando las diferencias absolutas entre las coordenadas (filas y columnas) del nodo actual y el nodo final.
 
-```python
+`
 # Heurística: usamos la distancia Manhattan multiplicada por 10 unidades
 nodo_inicio.h = (abs(fila_inicio - fila_fin) + abs(col_inicio - col_fin)) * 10
-nodo_inicio.f = nodo_inicio.g + nodo_inicio.h
+nodo_inicio.f = nodo_inicio.g + nodo_inicio.h` 
 
 
 
