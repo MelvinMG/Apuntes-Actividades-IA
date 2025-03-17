@@ -50,10 +50,11 @@ En esta función se exploran todos los nodos o vecinos existentes en la cuadríc
 La heurística `h` se calcula usando la **distancia Manhattan** multiplicada por 10 unidades:
 La distancia Manhattan se obtiene sumando las diferencias absolutas entre las coordenadas (filas y columnas) del nodo actual y el nodo final.
 
-`
+```
 # Heurística: usamos la distancia Manhattan multiplicada por 10 unidades
 nodo_inicio.h = (abs(fila_inicio - fila_fin) + abs(col_inicio - col_fin)) * 10
-nodo_inicio.f = nodo_inicio.g + nodo_inicio.h` 
+nodo_inicio.f = nodo_inicio.g + nodo_inicio.h      
+```
 
 
 
@@ -108,7 +109,8 @@ En este avance se ha implementado la funcionalidad para **reconstruir y visualiz
 
    
 
-` def reconstruir_camino(nodo_fin):
+```
+       def reconstruir_camino(nodo_fin):
            """Reconstruye la ruta óptima a partir del nodo final, siguiendo los nodos parent."""
            camino = []
            nodo_actual = nodo_fin
@@ -116,18 +118,19 @@ En este avance se ha implementado la funcionalidad para **reconstruir y visualiz
                camino.append(nodo_actual)
                nodo_actual = nodo_actual.parent
            camino.reverse()  # Para que el camino vaya del inicio al final
-           return camino`      
+           return camino
+```
        
 ### 3. **Pintado del Camino Óptimo**
 Luego de reconstruir la ruta, se marca visualmente en la cuadrícula, pintando de verde los nodos que forman parte del camino más corto.
 
-`
+```
 def pintar_camino(camino):
     """Pinta de verde la ruta óptima."""
     for nodo in camino:
         if not nodo.es_inicio() and not nodo.es_fin():
             nodo.hacer_camino_optimo()
-`
+```
 ## Explicación del Cálculo del Camino Más Corto
  ### **Atributo parent en cada nodo**
 

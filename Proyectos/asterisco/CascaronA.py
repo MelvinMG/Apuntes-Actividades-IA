@@ -30,7 +30,7 @@ class Nodo:
         self.color = BLANCO
         self.ancho = ancho
         self.total_filas = total_filas
-        
+
         # Costos para el algoritmo A*
         self.g = float("inf")  # Costo acumulado (inicialmente infinito)
         self.h = 0             # Heurística (distancia estimada al final)
@@ -113,6 +113,8 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
     """
     Explora los nodos usando un algoritmo A* modificado.
     Los nodos visitados se colorean de gris.
+    Se añade un delay para visualizar la expansión de los vecinos.
+    Imprime en consola la lista abierta, lista cerrada en cada iteración.
     Devuelve el nodo final con sus costos actualizados.
     """
     lista_abierta = []  # Nodos pendientes de explorar
@@ -132,8 +134,9 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
         nodo_actual = lista_abierta.pop(0)
         lista_cerrada.append(nodo_actual)
         print(f"Visitado: {nodo_actual.get_pos()} :: G={nodo_actual.g}, H={nodo_actual.h}, F={nodo_actual.f}")
+        print("Lista abierta:", [n.get_pos() for n in lista_abierta])
+        print("Lista cerrada:", [n.get_pos() for n in lista_cerrada])
 
-        # Si alcanzamos el nodo final, se puede detener la exploración (o no, según tus necesidades)
         if nodo_actual == nodo_fin:
             print("¡Objetivo alcanzado!")
             break
@@ -141,7 +144,6 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
         vecinos = obtener_vecinos(grid, nodo_actual)
         for vecino in vecinos:
             if not vecino.es_pared() and vecino not in lista_cerrada:
-                # Determinar el costo del movimiento: 10 para movimientos horizontales/verticales, 14 para diagonales
                 if vecino.fila == nodo_actual.fila or vecino.col == nodo_actual.col:
                     costo_movimiento = 10
                 else:
@@ -153,16 +155,21 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
                     vecino.g = temp_g
                     vecino.h = (abs(vecino.fila - fila_fin) + abs(vecino.col - col_fin)) * 10
                     vecino.f = vecino.g + vecino.h
-                    vecino.parent = nodo_actual  # Guardamos el predecesor
+                    vecino.parent = nodo_actual
                     if vecino not in lista_abierta:
                         lista_abierta.append(vecino)
 
-    return nodo_fin  # Retornamos el nodo final para reconstruir el camino
+        # Actualiza pantalla y espera para visualizar la expansión
+        dibujar(VENTANA, grid, len(grid), ANCHO_VENTANA)
+        pygame.time.delay(100)  # Delay de 100 ms
+
+    return nodo_fin
 
 def reconstruir_camino(nodo_fin):
     """
     Reconstruye el camino óptimo desde el nodo final hasta el nodo de inicio
     utilizando los predecesores.
+    Imprime la lista del camino óptimo.
     """
     camino = []
     nodo_actual = nodo_fin
@@ -170,6 +177,7 @@ def reconstruir_camino(nodo_fin):
         camino.append(nodo_actual)
         nodo_actual = nodo_actual.parent
     camino.reverse()  # Orden de inicio a fin
+    print("Camino óptimo:", [n.get_pos() for n in camino])
     return camino
 
 def pintar_camino(camino):
@@ -202,14 +210,27 @@ def dibujar(ventana, grid, filas, ancho):
     for fila in grid:
         for nodo in fila:
             nodo.dibujar(ventana)
-            # Dibujar valores G, H, F en la celda (si el nodo fue actualizado)
             if nodo.g < float("inf"):
                 offset_x = nodo.x + 2
                 offset_y = nodo.y + 2
                 escribir_texto(ventana, f"G:{nodo.g}", offset_x, offset_y, color=BLANCO, tam=15)
                 escribir_texto(ventana, f"H:{nodo.h}", offset_x, offset_y+16, color=BLANCO, tam=15)
                 escribir_texto(ventana, f"F:{nodo.f}", offset_x, offset_y+32, color=BLANCO, tam=15)
-    dibujar_grid(ventana, filas, ancho)
+    dibujar_grid(VENTANA, filas, ancho) 
+    pygame.display.update()
+
+def dibujar(ventana, grid, filas, ancho):
+    ventana.fill(BLANCO)
+    for fila in grid:
+        for nodo in fila:
+            nodo.dibujar(ventana)
+            if nodo.g < float("inf"):
+                offset_x = nodo.x + 2
+                offset_y = nodo.y + 2
+                escribir_texto(ventana, f"G:{nodo.g}", offset_x, offset_y, color=BLANCO, tam=15)
+                escribir_texto(ventana, f"H:{nodo.h}", offset_x, offset_y+16, color=BLANCO, tam=15)
+                escribir_texto(ventana, f"F:{nodo.f}", offset_x, offset_y+32, color=BLANCO, tam=15)
+    dibujar_grid(VENTANA, filas, ancho)
     pygame.display.update()
 
 def obtener_click_pos(pos, filas, ancho):
@@ -227,7 +248,7 @@ def main(ventana, ancho):
     corriendo = True
 
     while corriendo:
-        dibujar(ventana, grid, FILAS, ancho)
+        dibujar(VENTANA, grid, FILAS, ancho)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 corriendo = False
@@ -263,6 +284,11 @@ def main(ventana, ancho):
                     nodo_final = explorar_nodos(grid, inicio.fila, inicio.col, fin.fila, fin.col)
                     camino = reconstruir_camino(nodo_final)
                     pintar_camino(camino)
+                # Tecla Delete: reinicia toda la cuadrícula
+                elif event.key == pygame.K_DELETE:
+                    grid = crear_grid(FILAS, ancho)
+                    inicio = None
+                    fin = None
 
         # Fin del bucle de eventos
     pygame.quit()
