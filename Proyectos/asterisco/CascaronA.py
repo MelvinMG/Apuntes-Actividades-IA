@@ -1,22 +1,22 @@
 import pygame
 
 # Configuraciones iniciales
-pygame.init()  # Asegúrate de inicializar Pygame (para poder usar fuentes)
+pygame.init()  # Inicializa Pygame (para usar fuentes)
 ANCHO_VENTANA = 800
 VENTANA = pygame.display.set_mode((ANCHO_VENTANA, ANCHO_VENTANA))
 pygame.display.set_caption("Visualización de Nodos")
 
 # Colores (RGB)
-BLANCO = (255, 255, 255)
-NEGRO = (0, 0, 0)
-GRIS = (128, 128, 128)
-VERDE = (0, 255, 0)
+BLANCO = (255, 255, 255)  # Vacíos
+NEGRO = (0, 0, 0)         # Paredes
+GRIS = (128, 128, 128)    # Nodos visitados
+VERDE = (0, 255, 0)       # Camino óptimo (ruta rápida)
 ROJO = (255, 0, 0)
-NARANJA = (255, 165, 0)
-PURPURA = (128, 0, 128)
+NARANJA = (255, 165, 0)   # Inicio
+PURPURA = (128, 0, 128)   # Fin
 
-def escribir_texto(ventana, texto, x, y, color=(0,0,0), tam=18):
-    """Dibuja el texto en la ventana, en la posición (x, y)."""
+def escribir_texto(ventana, texto, x, y, color=(0, 0, 0), tam=18):
+    """Dibuja el texto en la ventana en la posición (x, y)."""
     fuente = pygame.font.SysFont(None, tam)
     superficie_texto = fuente.render(texto, True, color)
     ventana.blit(superficie_texto, (x, y))
@@ -33,8 +33,10 @@ class Nodo:
         
         # Costos para el algoritmo A*
         self.g = float("inf")  # Costo acumulado (inicialmente infinito)
-        self.h = 0             # Heurística
+        self.h = 0             # Heurística (distancia estimada al final)
         self.f = float("inf")  # f = g + h
+        self.parent = None     # Para reconstruir el camino óptimo
+        self.optimo = False    # Bandera: True si el nodo es parte del camino óptimo
 
     def get_pos(self):
         return self.fila, self.col
@@ -53,6 +55,8 @@ class Nodo:
         self.g = float("inf")
         self.h = 0
         self.f = float("inf")
+        self.parent = None
+        self.optimo = False
 
     def hacer_inicio(self):
         self.color = NARANJA
@@ -63,14 +67,19 @@ class Nodo:
     def hacer_fin(self):
         self.color = PURPURA
 
+    def marcar_optimo(self):
+        """Marca el nodo como parte del camino óptimo."""
+        self.optimo = True
+
     def dibujar(self, ventana):
         """
         Pinta el nodo según su estado:
-         - Naranja si es el inicio
-         - Púrpura si es el fin
-         - Negro si es pared
-         - Verde si tiene g < inf (ha sido visitado o actualizado)
-         - Blanco si no se ha actualizado
+         - NARANJA si es el inicio
+         - PÚRPURA si es el fin
+         - NEGRO si es pared
+         - VERDE si es parte del camino óptimo
+         - GRIS si ha sido visitado (g < inf)
+         - BLANCO si no se ha actualizado
         """
         if self.es_inicio():
             color = NARANJA
@@ -78,11 +87,13 @@ class Nodo:
             color = PURPURA
         elif self.es_pared():
             color = NEGRO
-        elif self.g < float("inf"):
+        elif self.optimo:
             color = VERDE
+        elif self.g < float("inf"):
+            color = GRIS
         else:
             color = BLANCO
-        
+
         pygame.draw.rect(ventana, color, (self.x, self.y, self.ancho, self.ancho))
 
 def obtener_vecinos(grid, nodo):
@@ -99,12 +110,17 @@ def obtener_vecinos(grid, nodo):
     return vecinos
 
 def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
+    """
+    Explora los nodos usando un algoritmo A* modificado.
+    Los nodos visitados se colorean de gris.
+    Devuelve el nodo final con sus costos actualizados.
+    """
     lista_abierta = []  # Nodos pendientes de explorar
     lista_cerrada = []  # Nodos ya explorados
 
     nodo_inicio = grid[fila_inicio][col_inicio]
     nodo_inicio.g = 0
-    # Heurística: multiplicamos por 10 para representar el costo en puntos
+    # Heurística: usamos la distancia Manhattan multiplicada por 10 unidades
     nodo_inicio.h = (abs(fila_inicio - fila_fin) + abs(col_inicio - col_fin)) * 10
     nodo_inicio.f = nodo_inicio.g + nodo_inicio.h
 
@@ -112,23 +128,20 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
     lista_abierta.append(nodo_inicio)
 
     while len(lista_abierta) > 0:
-        # Ordena la lista abierta por el valor de f (menor costo total estimado)
         lista_abierta.sort(key=lambda nodo: nodo.f)
         nodo_actual = lista_abierta.pop(0)
         lista_cerrada.append(nodo_actual)
+        print(f"Visitado: {nodo_actual.get_pos()} :: G={nodo_actual.g}, H={nodo_actual.h}, F={nodo_actual.f}")
 
-        print(f"Visitado: {nodo_actual.get_pos()} :: Calculos(G={nodo_actual.g}, H={nodo_actual.h}, F={nodo_actual.f})")
-
-        # Si hemos alcanzado el nodo final, detenemos la exploración
+        # Si alcanzamos el nodo final, se puede detener la exploración (o no, según tus necesidades)
         if nodo_actual == nodo_fin:
             print("¡Objetivo alcanzado!")
             break
 
-        # Obtenemos los vecinos del nodo actual
         vecinos = obtener_vecinos(grid, nodo_actual)
         for vecino in vecinos:
             if not vecino.es_pared() and vecino not in lista_cerrada:
-                # Determinar el costo de movimiento: 10 para horizontal/vertical, 14 para diagonal
+                # Determinar el costo del movimiento: 10 para movimientos horizontales/verticales, 14 para diagonales
                 if vecino.fila == nodo_actual.fila or vecino.col == nodo_actual.col:
                     costo_movimiento = 10
                 else:
@@ -136,15 +149,36 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
 
                 temp_g = nodo_actual.g + costo_movimiento
 
-                # Si encontramos un camino más corto, actualizamos el vecino
                 if temp_g < vecino.g:
                     vecino.g = temp_g
                     vecino.h = (abs(vecino.fila - fila_fin) + abs(vecino.col - col_fin)) * 10
                     vecino.f = vecino.g + vecino.h
+                    vecino.parent = nodo_actual  # Guardamos el predecesor
                     if vecino not in lista_abierta:
                         lista_abierta.append(vecino)
 
-    return lista_cerrada
+    return nodo_fin  # Retornamos el nodo final para reconstruir el camino
+
+def reconstruir_camino(nodo_fin):
+    """
+    Reconstruye el camino óptimo desde el nodo final hasta el nodo de inicio
+    utilizando los predecesores.
+    """
+    camino = []
+    nodo_actual = nodo_fin
+    while nodo_actual is not None:
+        camino.append(nodo_actual)
+        nodo_actual = nodo_actual.parent
+    camino.reverse()  # Orden de inicio a fin
+    return camino
+
+def pintar_camino(camino):
+    """
+    Pinta de VERDE (camino óptimo) cada nodo del camino, excepto el inicio y el fin.
+    """
+    for nodo in camino:
+        if not nodo.es_inicio() and not nodo.es_fin():
+            nodo.marcar_optimo()
 
 def crear_grid(filas, ancho):
     grid = []
@@ -168,14 +202,13 @@ def dibujar(ventana, grid, filas, ancho):
     for fila in grid:
         for nodo in fila:
             nodo.dibujar(ventana)
-            # --- DIBUJAR VALORES G, H, F DENTRO DE LA CELDA ---
+            # Dibujar valores G, H, F en la celda (si el nodo fue actualizado)
             if nodo.g < float("inf"):
                 offset_x = nodo.x + 2
                 offset_y = nodo.y + 2
-                escribir_texto(ventana, f"G:{nodo.g}", offset_x, offset_y, color=NEGRO, tam=15)
-                escribir_texto(ventana, f"H:{nodo.h}", offset_x, offset_y+16, color=NEGRO, tam=15)
-                escribir_texto(ventana, f"F:{nodo.f}", offset_x, offset_y+32, color=NEGRO, tam=15)
-
+                escribir_texto(ventana, f"G:{nodo.g}", offset_x, offset_y, color=BLANCO, tam=15)
+                escribir_texto(ventana, f"H:{nodo.h}", offset_x, offset_y+16, color=BLANCO, tam=15)
+                escribir_texto(ventana, f"F:{nodo.f}", offset_x, offset_y+32, color=BLANCO, tam=15)
     dibujar_grid(ventana, filas, ancho)
     pygame.display.update()
 
@@ -189,10 +222,8 @@ def obtener_click_pos(pos, filas, ancho):
 def main(ventana, ancho):
     FILAS = 10
     grid = crear_grid(FILAS, ancho)
-
     inicio = None
     fin = None
-
     corriendo = True
 
     while corriendo:
@@ -201,7 +232,7 @@ def main(ventana, ancho):
             if event.type == pygame.QUIT:
                 corriendo = False
 
-            # Clic izquierdo para definir inicio, fin y paredes
+            # Click izquierdo: definir inicio, fin y paredes
             if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
                 fila, col = obtener_click_pos(pos, FILAS, ancho)
@@ -215,7 +246,7 @@ def main(ventana, ancho):
                 elif nodo != fin and nodo != inicio:
                     nodo.hacer_pared()
 
-            # Clic derecho para restablecer la celda
+            # Click derecho: restablecer la celda
             elif pygame.mouse.get_pressed()[2]:
                 pos = pygame.mouse.get_pos()
                 fila, col = obtener_click_pos(pos, FILAS, ancho)
@@ -226,10 +257,13 @@ def main(ventana, ancho):
                 elif nodo == fin:
                     fin = None
 
-            # Presionar la barra espaciadora para iniciar la exploración (si se han definido inicio y fin)
+            # Tecla Espacio: iniciar la exploración y luego pintar el camino óptimo
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and inicio and fin:
-                    explorar_nodos(grid, inicio.fila, inicio.col, fin.fila, fin.col)
+                    nodo_final = explorar_nodos(grid, inicio.fila, inicio.col, fin.fila, fin.col)
+                    camino = reconstruir_camino(nodo_final)
+                    pintar_camino(camino)
+
         # Fin del bucle de eventos
     pygame.quit()
 
