@@ -96,6 +96,8 @@ class Nodo:
 
         pygame.draw.rect(ventana, color, (self.x, self.y, self.ancho, self.ancho))
 
+
+# Funciones para obtener los vecinos de un nodo
 def obtener_vecinos(grid, nodo):
     vecinos = []
     filas = len(grid)
@@ -109,21 +111,19 @@ def obtener_vecinos(grid, nodo):
             vecinos.append(grid[f][c])
     return vecinos
 
+
+# Funcion para explorar todos los nodos posibles
 def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
-    """
-    Explora los nodos usando un algoritmo A* modificado.
-    Los nodos visitados se colorean de gris.
-    Se añade un delay para visualizar la expansión de los vecinos.
-    Imprime en consola la lista abierta, lista cerrada en cada iteración.
-    Devuelve el nodo final con sus costos actualizados.
-    """
+ 
     lista_abierta = []  # Nodos pendientes de explorar
     lista_cerrada = []  # Nodos ya explorados
 
     nodo_inicio = grid[fila_inicio][col_inicio]
     nodo_inicio.g = 0
     # Heurística: usamos la distancia Manhattan multiplicada por 10 unidades
+    
     nodo_inicio.h = (abs(fila_inicio - fila_fin) + abs(col_inicio - col_fin)) * 10
+
     nodo_inicio.f = nodo_inicio.g + nodo_inicio.h
 
     nodo_fin = grid[fila_fin][col_fin]
@@ -137,8 +137,7 @@ def explorar_nodos(grid, fila_inicio, col_inicio, fila_fin, col_fin):
         print("Lista abierta:", [n.get_pos() for n in lista_abierta])
         print("Lista cerrada:", [n.get_pos() for n in lista_cerrada])
 
-        if nodo_actual == nodo_fin:
-            print("¡Objetivo alcanzado!")
+        if nodo_actual == nodo_fin:           
             break
 
         vecinos = obtener_vecinos(grid, nodo_actual)
@@ -219,19 +218,6 @@ def dibujar(ventana, grid, filas, ancho):
     dibujar_grid(VENTANA, filas, ancho) 
     pygame.display.update()
 
-def dibujar(ventana, grid, filas, ancho):
-    ventana.fill(BLANCO)
-    for fila in grid:
-        for nodo in fila:
-            nodo.dibujar(ventana)
-            if nodo.g < float("inf"):
-                offset_x = nodo.x + 2
-                offset_y = nodo.y + 2
-                escribir_texto(ventana, f"G:{nodo.g}", offset_x, offset_y, color=BLANCO, tam=15)
-                escribir_texto(ventana, f"H:{nodo.h}", offset_x, offset_y+16, color=BLANCO, tam=15)
-                escribir_texto(ventana, f"F:{nodo.f}", offset_x, offset_y+32, color=BLANCO, tam=15)
-    dibujar_grid(VENTANA, filas, ancho)
-    pygame.display.update()
 
 def obtener_click_pos(pos, filas, ancho):
     ancho_nodo = ancho // filas
@@ -241,7 +227,7 @@ def obtener_click_pos(pos, filas, ancho):
     return fila, col
 
 def main(ventana, ancho):
-    FILAS = 10
+    FILAS = 11
     grid = crear_grid(FILAS, ancho)
     inicio = None
     fin = None
