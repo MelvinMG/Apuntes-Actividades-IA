@@ -16,7 +16,7 @@ while True:
        
         frame2 = cv.resize(frame2, (100, 100), interpolation=cv.INTER_AREA)#escalar todas las imagenes a un tamaño de 100x100, interpolation para que no haya perdidads al escalar
         if(i%5==0):
-            cv.imwrite('Actividades en clase\Ejercicio_Eigenfaces\Melvin\Melvin'+str(i)+'.jpg', frame2)
+            cv.imwrite('Actividades en clase\Ejercicio_Eigenfaces\Brandon\Brandon'+str(i)+'.jpg', frame2)
             cv.imshow('rostror', frame2)
     cv.imshow('rostros', frame)
     i = i+1
