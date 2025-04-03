@@ -51,6 +51,7 @@ El modelo puede ajustarse para trabajar con el número óptimo de entradas segú
 ## 5. ¿Que valores a la salida de la red se podrian esperar?
 
 La salida de la red será un vector de probabilidades, donde cada valor representará la probabilidad de que la emoción detectada sea una de las categorías posibles. Por ejemplo, si el modelo clasifica 5 emociones (felicidad, tristeza, enojo, sorpresa, neutralidad), la salida podría verse así:
+
 $$
 [0.75,0.10,0.05,0.05,0.05]
 $$
