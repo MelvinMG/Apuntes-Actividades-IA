@@ -33,3 +33,58 @@ En este primer avance, se configuró el entorno de trabajo y se implementó una 
   
   ### Ejemplo de Resultado
   ![Avance 1](./images/Parte_1.png)
+
+
+# Avance 2: Expresiones  
+Este avance se centra en la detección de diversas expresiones faciales utilizando MediaPipe y OpenCV. Se detectan y clasifican las siguientes expresiones:
+
+- Enojado
+- Triste
+- Sorprendida
+- Feliz
+- Neutral
+
+El código utiliza distintos puntos de referencia de la malla facial (por ejemplo, índices para la boca, cejas y ojos) para calcular relaciones o diferencias que se correlacionan con ciertas expresiones. Además, se imprime en consola ciertos valores (como distancias y ratios) cada 1 segundo para poder reajustar los umbrales y mejorar la precisión de la detección.
+
+## Puntos de Referencia y Cálculos
+### Boca:
+Se utilizan puntos específicos (como las comisuras, el borde superior y el inferior de la boca) para medir el ancho y la altura de la boca. La relación entre el ancho y la altura (ancho/alto) varía según la expresión:
+
+Una relación baja indica que la boca está abierta (característico de la expresión de sorpresa).
+
+Una relación en un rango alto (por ejemplo, entre 5 y 10) sugiere una sonrisa, lo que se interpreta como felicidad.
+
+### Cejas y Ojos:
+Para detectar la expresión de enojo se evalúa la distancia entre las cejas en relación con la distancia entre los ojos (o puntos representativos de los ojos). En una persona enojada, las cejas tienden a acercarse. Se calcula un ratio (distancia entre cejas / distancia entre ojos), y un valor bajo de este ratio se interpreta como enojo.
+
+
+## Impresión de Valores para Reajuste de Umbrales
+Para afinar y depurar el sistema, se imprime en la consola, cada 1 segundo, información clave:
+
+### Para la boca (felicidad o sorpresa):
+Se imprimen el ancho, la altura y la relación (ratio) de la boca. Estos valores permiten ajustar el umbral que determina si la boca está en una posición típica de sorpresa (relación baja) o de felicidad (relación dentro de un rango específico).
+
+### Para las cejas y ojos (enojo):
+Se imprime la distancia entre las cejas, la distancia entre los ojos (o puntos representativos), y el ratio resultante. Esto ayuda a reajustar el umbral que indica si las cejas están demasiado juntas, lo cual es indicativo de enojo.
+
+### Para la tristeza:
+Se imprimen las diferencias normalizadas entre las esquinas de la boca y el centro vertical, así como la suma de estas diferencias. Esto facilita la evaluación de cuándo las esquinas de la boca están lo suficientemente caídas como para considerarse una expresión de tristeza.
+
+## Clasificación de Expresiones
+El sistema evalúa las expresiones en el siguiente orden de prioridad:
+
+- Enojado:
+Se detecta si las cejas se han acercado significativamente en relación con la distancia entre los ojos.
+![Expresion Enojado](./images/Enojado.png)
+- Sorprendida:
+Se determina a partir de la relación baja entre el ancho y la altura de la boca, indicando que la boca está abierta.
+![Expresion Sorprendida](./images/Sorprendida.png)
+- Feliz:
+Se clasifica cuando la relación de la boca se encuentra dentro de un rango específico (por ejemplo, entre 5 y 10).
+![Expresion Feliz](./images/Feliz.png)
+- Triste:
+Se detecta mediante la evaluación de la caída de las esquinas de la boca respecto al centro vertical.
+![Expresion Triste](./images/Triste.png)
+- Neutral:
+Si ninguna de las condiciones anteriores se cumple, la expresión se clasifica como neutral.
+![Expresion Neutral](./images/Neutral.png)
