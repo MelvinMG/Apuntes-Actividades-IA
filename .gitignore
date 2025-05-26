@@ -1,0 +1,4 @@
+
+# Ignorar cualquier archivo ZIP o RAR en cualquier carpeta
+*.zip
+*.rar
