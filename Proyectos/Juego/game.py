@@ -1,9 +1,6 @@
 import pygame
 import random
 
-from db import crear_tabla_si_no_existe, insertar_evento
-
-
 # Inicializar Pygame
 pygame.init()
 
@@ -148,24 +145,13 @@ def update():
         print("Colisión detectada!")
         reiniciar_juego()  # Terminar el juego y mostrar el menú
 
-# Llamar una vez al inicio del main
-crear_tabla_si_no_existe()
-
 # Función para guardar datos del modelo en modo manual
-
 def guardar_datos():
-    global jugador, bala, velocidad_bala, salto
-    distancia = abs(jugador.x - bala.x)
-    salto_hecho = 1 if salto else 0
-    datos_modelo.append((velocidad_bala, distancia, salto_hecho))
-    insertar_evento(velocidad_bala, distancia, salto_hecho)
-
-"""def guardar_datos():
     global jugador, bala, velocidad_bala, salto
     distancia = abs(jugador.x - bala.x)
     salto_hecho = 1 if salto else 0  # 1 si saltó, 0 si no saltó
     # Guardar velocidad de la bala, distancia al jugador y si saltó o no
-    datos_modelo.append((velocidad_bala, distancia, salto_hecho))"""
+    datos_modelo.append((velocidad_bala, distancia, salto_hecho))
 
 # Función para pausar el juego y guardar los datos
 def pausa_juego():
