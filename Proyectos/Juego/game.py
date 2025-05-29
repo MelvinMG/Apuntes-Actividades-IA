@@ -320,7 +320,7 @@ def main():
         if salto:
             manejar_salto()
 
-        destino = bala_vertical.x - jugador.width // 2
+        destino = POSICION_ORIGEN
         regresar_caminando = (
             bala_vertical.y > jugador.y + jugador.height and
             abs(jugador.x - destino) > 3
