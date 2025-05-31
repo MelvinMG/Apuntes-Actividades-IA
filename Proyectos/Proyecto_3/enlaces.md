@@ -1,2 +1,2 @@
 Video:
-https://itecm-my.sharepoint.com/:v:/g/personal/l21120229_morelia_tecnm_mx/EXwdgrvCsClFrQ0aX5le808BL580Ty2GFaCQXhLs79CHWw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=zBXohX
+https://itecm-my.sharepoint.com/:v:/g/personal/l21120229_morelia_tecnm_mx/EXwdgrvCsClFrQ0aX5le808BL580Ty2GFaCQXhLs79CHWw

@@ -192,7 +192,7 @@ Cada pregunta se abordó con un análisis equilibrado: autonomía versus protecc
 # 5. Anexos
 
 - **Video del proyecto**  
-  [Ver video explicativo](https://itecm-my.sharepoint.com/:v:/g/personal/l21120229_morelia_tecnm_mx/EXwdgrvCsClFrQ0aX5le808BL580Ty2GFaCQXhLs79CHWw?nav=eyJyZWZlcnJlcnRhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJlcmFsVmlldyI6Ik15RmlsZXNMaW5rQ29weSJ9&e=zBXohX)  
+  [Ver video explicativo](https://itecm-my.sharepoint.com/:v:/g/personal/l21120229_morelia_tecnm_mx/EXwdgrvCsClFrQ0aX5le808BL580Ty2GFaCQXhLs79CHWw)  
   *(Video alojado en SharePoint con una demostración y explicación del desarrollo del proyecto, su metodología y resultados principales.)*
 
   [.rar de los pdfs](https://itecm-my.sharepoint.com/:u:/g/personal/l21120229_morelia_tecnm_mx/EfxUS4iK98NJjuCrlXXUfD4Bl2_W6cathVyJ36gFpCyaaA?e=v0wfGg) 
